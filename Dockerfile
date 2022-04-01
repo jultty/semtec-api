@@ -1,4 +1,5 @@
-FROM maven:3.8.4-jdk-11 AS MAVEN_TOOL_CHAIN
+FROM maven:3.8.4-jdk-11-alpine AS MAVEN_TOOL_CHAIN
+RUN apk add --no-cache bash git
 COPY pom.xml /tmp/
 RUN mvn -B dependency:go-offline -f /tmp/pom.xml -s /usr/share/maven/ref/settings-docker.xml
 COPY src /tmp/src/
