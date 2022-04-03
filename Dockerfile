@@ -1,11 +1,16 @@
-FROM eclipse-temurin:11-jdk-alpine AS maven_tool_chain
-RUN apk add --no-cache maven
+FROM alpine:3.15.3 AS alpine
+RUN apk add --no-cache maven openjdk11
 COPY pom.xml /tmp/
-COPY src /tmp/src/
-RUN mkdir /app
-WORKDIR /tmp
 RUN mvn -B dependency:go-offline -f /tmp/pom.xml
-RUN mvn -B package
-RUN mv target/semtec-0.2.0-SNAPSHOT.jar /app/semtec-0.2.0-SNAPSHOT.jar
+COPY src /tmp/src/
+WORKDIR /tmp
+RUN mvn -B clean package
+
+FROM alpine
+RUN apk add --no-cache openjdk11-jre
+RUN mkdir /app
+COPY --from=alpine /tmp/target/*.jar /app/semtec-0.2.0-SNAPSHOT.jar
+RUN ls /app/
+VOLUME /tmp
 EXPOSE 8080
 ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/app/semtec-0.2.0-SNAPSHOT.jar"]
