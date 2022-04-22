@@ -10,7 +10,6 @@ FROM alpine
 RUN apk add --no-cache openjdk11-jre
 RUN mkdir /app
 COPY --from=alpine /tmp/target/*.jar /app/semtec-0.2.0-SNAPSHOT.jar
-RUN ls /app/
 VOLUME /tmp
 EXPOSE 8080
 ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/app/semtec-0.2.0-SNAPSHOT.jar"]
